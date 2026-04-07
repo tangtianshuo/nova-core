@@ -273,3 +273,29 @@ export const smsRegister = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ error: '服务器错误' });
   }
 };
+
+/**
+ * GET /auth/sms/stats
+ * 查询当天短信发送统计
+ */
+export const getSmsStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { phone } = req.query;
+
+    if (!phone || !isValidChinesePhone(phone as string)) {
+      res.status(400).json({ error: '无效的手机号' });
+      return;
+    }
+
+    const todayCount = await getTodaySendCount(phone as string);
+
+    res.status(200).json({
+      phone: maskPhone(phone as string),
+      todaySendCount: todayCount,
+      date: new Date().toISOString().slice(0, 10),
+    });
+  } catch (error) {
+    console.error('Get SMS stats error:', error);
+    res.status(500).json({ error: '服务器错误' });
+  }
+};

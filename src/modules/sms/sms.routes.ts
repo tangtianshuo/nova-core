@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { sendSmsCode, smsLogin, smsRegister } from './sms.controller.js';
+import { sendSmsCode, smsLogin, smsRegister, getSmsStats } from './sms.controller.js';
 
 const router = Router();
 
@@ -26,5 +26,13 @@ router.post('/login', smsLogin);
  * Returns: { user, accessToken, refreshToken, expiresIn, message }
  */
 router.post('/register', smsRegister);
+
+/**
+ * GET /auth/sms/stats
+ * 查询当天短信发送统计
+ * Query: { phone: string }
+ * Returns: { phone: string (masked), todaySendCount: number, date: string }
+ */
+router.get('/stats', getSmsStats);
 
 export default router;
