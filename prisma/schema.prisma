@@ -61,3 +61,17 @@ model RefreshToken {
   @@index([token])
   @@map("refresh_tokens")
 }
+
+model SmsAuditLog {
+  id        String   @id @default(cuid())
+  phone     String   // 格式: 138****5678 (掩码手机号)
+  action    String   // 'send' | 'verify_success' | 'verify_fail' | 'locked'
+  result    String   // 'success' | 'failed' | 'rate_limited' | 'locked'
+  ip        String?  @map("ip")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phone, createdAt])
+  @@index([action, createdAt])
+  @@map("sms_audit_logs")
+}
