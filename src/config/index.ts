@@ -40,10 +40,24 @@ interface OAuthConfig {
   // google?: OAuthProviderConfig;
 }
 
+interface SmsConfig {
+  aliyun: {
+    accessKeyId: string;
+    accessKeySecret: string;
+    signName: string;
+    templateCode: string;
+  };
+  code: {
+    length: number;
+    ttlSeconds: number;
+  };
+}
+
 interface AppConfig {
   jwt: JwtConfig;
   rateLimit: RateLimitConfig;
   oauth?: OAuthConfig;
+  sms?: SmsConfig;
 }
 
 // Load config file (config.yaml)
@@ -78,6 +92,18 @@ function loadConfigFile(): AppConfig {
           clientSecret: config.oauth.github?.clientSecret ?? process.env.GITHUB_CLIENT_SECRET ?? '',
           callbackUrl: config.oauth.github?.callbackUrl ?? `${process.env.API_BASE_URL ?? 'http://localhost:3000'}/auth/oauth/github/callback`,
           scope: config.oauth.github?.scope ?? ['read:user', 'user:email'],
+        },
+      } : undefined,
+      sms: config.sms ? {
+        aliyun: {
+          accessKeyId: process.env.ALIYUN_SMS_ACCESS_KEY_ID ?? '',
+          accessKeySecret: process.env.ALIYUN_SMS_ACCESS_KEY_SECRET ?? '',
+          signName: process.env.ALIYUN_SMS_SIGN_NAME ?? '',
+          templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE ?? '',
+        },
+        code: {
+          length: 6,
+          ttlSeconds: 300,
         },
       } : undefined,
     };
@@ -153,6 +179,18 @@ export const config = {
       scope: configFile.oauth?.github?.scope ?? ['read:user', 'user:email'],
     },
   },
+  sms: configFile.sms ? {
+    aliyun: {
+      accessKeyId: process.env.ALIYUN_SMS_ACCESS_KEY_ID ?? '',
+      accessKeySecret: process.env.ALIYUN_SMS_ACCESS_KEY_SECRET ?? '',
+      signName: process.env.ALIYUN_SMS_SIGN_NAME ?? '',
+      templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE ?? '',
+    },
+    code: {
+      length: 6,
+      ttlSeconds: 300,
+    },
+  } : undefined,
   env: process.env.NODE_ENV ?? 'development',
 } as const;
 

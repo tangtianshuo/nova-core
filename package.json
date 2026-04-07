@@ -19,12 +19,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@alicloud/sms-sdk": "^1.1.6",
     "@prisma/client": "^6.0.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "express-rate-limit": "^8.3.2",
     "helmet": "^8.1.0",
+    "ioredis": "^5.4.2",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.3"
   },
@@ -33,6 +35,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/ioredis": "^5.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.0.0",
