@@ -5,9 +5,10 @@ interface LoginFormProps {
   onSubmit: (username: string, password: string) => Promise<void>;
   loading?: boolean;
   onSwitchToRegister?: () => void;
+  onSwitchToSms?: () => void;
 }
 
-export function LoginForm({ onSubmit, loading = false, onSwitchToRegister }: LoginFormProps) {
+export function LoginForm({ onSubmit, loading = false, onSwitchToRegister, onSwitchToSms }: LoginFormProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -107,6 +108,19 @@ export function LoginForm({ onSubmit, loading = false, onSwitchToRegister }: Log
               className="switch-button"
             >
               去注册
+            </button>
+          </div>
+        )}
+
+        {onSwitchToSms && (
+          <div className="form-switch">
+            <button
+              type="button"
+              onClick={onSwitchToSms}
+              disabled={loading || submitting}
+              className="switch-button link-button"
+            >
+              使用短信验证码登录
             </button>
           </div>
         )}

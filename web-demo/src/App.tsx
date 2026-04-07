@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './hooks';
-import { LoginForm, RegisterForm, UserInfo, ErrorMessage, LinkedAccounts } from './components';
+import { LoginForm, RegisterForm, SmsForm, UserInfo, ErrorMessage } from './components';
 
 import './index.css';
 
-type AuthMode = 'login' | 'register';
+type AuthMode = 'login' | 'register' | 'sms';
 
 function App() {
   const [authMode, setAuthMode] = useState<AuthMode>('login');
@@ -16,10 +16,16 @@ function App() {
     loading,
     error,
     linkedAccounts,
+    smsStats,
+    smsCodeSent,
     login,
     register,
     logout,
     validateToken,
+    sendSmsCode,
+    smsLogin,
+    smsRegister,
+    getSmsStats,
     clearError,
     unlinkOAuthAccount,
   } = useAuth();
@@ -80,6 +86,20 @@ function App() {
     await unlinkOAuthAccount(provider);
   };
 
+  const handleSendSmsCode = async (phone: string, type: 'login' | 'register') => {
+    await sendSmsCode(phone, type);
+    // Auto-fetch stats after sending code
+    await getSmsStats(phone);
+  };
+
+  const handleSmsLogin = async (phone: string, code: string) => {
+    await smsLogin(phone, code);
+  };
+
+  const handleSmsRegister = async (phone: string, code: string, username: string) => {
+    await smsRegister(phone, code, username);
+  };
+
   if (loading) {
     return (
       <div className="app-container">
@@ -112,12 +132,33 @@ function App() {
               <LoginForm
                 onSubmit={handleLogin}
                 onSwitchToRegister={() => setAuthMode('register')}
+                onSwitchToSms={() => setAuthMode('sms')}
               />
-            ) : (
+            ) : authMode === 'register' ? (
               <RegisterForm
                 onSubmit={handleRegister}
                 onSwitchToLogin={() => setAuthMode('login')}
               />
+            ) : (
+              <SmsForm
+                onSubmit={async (phone, code, username) => {
+                  if (username) {
+                    await handleSmsRegister(phone, code, username);
+                  } else {
+                    await handleSmsLogin(phone, code);
+                  }
+                }}
+                onSendCode={handleSendSmsCode}
+                onSwitchToLogin={() => setAuthMode('login')}
+              />
+            )}
+
+            {/* SMS code sent notification */}
+            {smsCodeSent && smsStats && (
+              <div className="sms-stats-info">
+                <p>验证码已发送</p>
+                <p className="sms-stats-detail">今日已发送: {smsStats.todaySendCount} 次</p>
+              </div>
             )}
           </>
         ) : (
