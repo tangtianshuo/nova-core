@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import authRoutes from './modules/auth/auth.routes.js';
 import oauthRoutes from './modules/oauth/oauth.routes.js';
+import smsRoutes from './modules/sms/sms.routes.js';
 import { apiDocsRoutes } from './modules/api-docs/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/auth/sms', smsRoutes);
 app.use('/', oauthRoutes);
 
 // API Documentation (Swagger UI)
