@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+.npm
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OpenAPI/Swagger cache
+swagger-ui-*
+
+# GSD Workflow (local planning artifacts)
+.planning/
+
+# Local config overrides
+config.local.yaml
+config.local.yml
+
+# Prisma
+prisma/migrations/*.sql
+
+# SDK specific
+nova-auth-sdk/dist/
+nova-auth-sdk/node_modules/
+
+# Web-demo
+web-demo/dist/

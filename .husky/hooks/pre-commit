@@ -1,0 +1,23 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# 检查是否修改了路由文件
+CHANGED_routes=$(git diff --cached --name-only | grep -E "src/modules/.*/.*\\.routes\\.ts$" || true)
+
+if [ -n "$CHANGED_routes" ]; then
+  echo "📚 路由文件已修改，请记得更新 openapi.yaml 文档"
+  echo ""
+  echo "运行以下命令同步文档:"
+  echo "  npm run docs:sync"
+  echo ""
+  echo "或手动更新 openapi.yaml 后运行:"
+  echo "  npm run docs:check"
+  echo ""
+
+  # 检查 openapi.yaml 是否被修改
+  if ! git diff --cached --name-only | grep -q "openapi.yaml"; then
+    echo "⚠️  警告: openapi.yaml 未更新，请先更新文档再提交"
+    echo "如果确认文档无需更新，使用 git commit --no-verify 跳过此检查"
+    exit 1
+  fi
+fi

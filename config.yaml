@@ -1,0 +1,20 @@
+# Nova Core Configuration
+# Tunable parameters for authentication service
+
+jwt:
+  accessToken:
+    expiresIn: "1h"
+  refreshToken:
+    expiresIn: "7d"
+
+oauth:
+  github:
+    enabled: true
+    clientId: "${GITHUB_CLIENT_ID}"
+    clientSecret: "${GITHUB_CLIENT_SECRET}"
+    callbackUrl: "${API_BASE_URL}/auth/oauth/github/callback"
+    scope: ["read:user", "user:email"]
+
+rateLimit:
+  windowMs: 900000
+  max: 5

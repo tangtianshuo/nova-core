@@ -1,0 +1,47 @@
+{
+  "name": "nova-core",
+  "version": "1.0.0",
+  "description": "Authentication service for C/S client",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/app.ts",
+    "start": "node dist/app.js",
+    "test": "echo \"No tests specified\" && exit 0",
+    "create-user": "tsx scripts/create-user.ts",
+    "docs:sync": "tsx scripts/sync-openapi.ts",
+    "docs:serve": "swagger-ui-express",
+    "docs:validate": "tsx scripts/validate-swagger.ts",
+    "docs:check": "tsx scripts/validate-swagger.ts && echo '✅ OpenAPI spec is valid'",
+    "validate:swagger": "tsx scripts/validate-swagger.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.25.4",
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.0.0",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34",
+    "prisma": "^6.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "yamljs": "^0.3.0"
+  }
+}

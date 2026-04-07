@@ -1,0 +1,693 @@
+openapi: 3.0.3
+info:
+  title: Nova Authentication API
+  description: |
+    Nova 认证中心 RESTful API
+
+    ## 认证方式
+
+    大部分端点需要 JWT Bearer Token 认证：
+
+    ```http
+    Authorization: Bearer <your_access_token>
+    ```
+
+    ## 令牌刷新
+
+    Access Token 有效期为 1 小时。当令牌过期时，使用 Refresh Token 获取新的 Access Token。
+
+    ## OAuth 2.0
+
+    支持 GitHub OAuth 2.0 登录，详见 OAuth 端点。
+
+    ## SDK
+
+    TypeScript/JavaScript 项目可使用官方 SDK 简化集成：
+
+    ```bash
+    npm install @nova-core/auth-sdk
+    ```
+  version: 1.1.0
+  contact:
+    name: Nova Core Team
+    email: support@nova.com
+    url: https://github.com/nova-core/nova-core
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: 开发环境
+  - url: https://api-staging.nova.com
+    description: 测试环境
+  - url: https://api.nova.com
+    description: 生产环境
+
+tags:
+  - name: Authentication
+    description: 用户认证相关接口
+  - name: OAuth
+    description: OAuth 2.0 第三方登录
+  - name: User
+    description: 用户信息管理
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: 用户注册
+      description: 创建新用户账号并自动登录
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            examples:
+              normal:
+                summary: 正常注册
+                value:
+                  username: johndoe
+                  email: john@example.com
+                  password: SecurePass123!
+      responses:
+        '201':
+          description: 注册成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RegisterResponse'
+                  - type: object
+                    properties:
+                      accessToken:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                      refreshToken:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                      expiresIn:
+                        type: string
+                        example: 1h
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: 用户登录
+      description: 使用用户名/邮箱和密码登录
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              with_email:
+                summary: 使用邮箱登录
+                value:
+                  username: john@example.com
+                  password: password123
+              with_username:
+                summary: 使用用户名登录
+                value:
+                  username: johndoe
+                  password: password123
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: 刷新访问令牌
+      description: 使用 refresh token 获取新的 access token（令牌轮换）
+      operationId: refresh
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: 刷新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Refresh token 无效或已过期
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Invalid or expired refresh token
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/validate:
+    post:
+      tags:
+        - Authentication
+      summary: 验证令牌
+      description: 验证 JWT token 并返回用户信息
+      operationId: validateToken
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 令牌有效
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateTokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: 用户注销
+      description: 注销登录并撤销 refresh token
+      operationId: logout
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: 要撤销的 refresh token（可选）
+            example:
+              refreshToken: eyJhbGciOiJIUzI1NiIs...
+      responses:
+        '200':
+          description: 注销成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/oauth/{provider}/login:
+    get:
+      tags:
+        - OAuth
+      summary: OAuth 登录入口
+      description: 重定向到第三方 OAuth 提供商进行授权
+      operationId: oauthLogin
+      parameters:
+        - $ref: '#/components/parameters/Provider'
+        - name: redirect_uri
+          in: query
+          description: OAuth 回调 URL（可选，使用默认配置）
+          schema:
+            type: string
+            format: uri
+          example: https://myapp.com/login/oauth/callback
+      responses:
+        '302':
+          description: 重定向到 OAuth 提供商
+          headers:
+            Location:
+              description: OAuth 授权 URL
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /auth/oauth/{provider}/callback:
+    get:
+      tags:
+        - OAuth
+      summary: OAuth 回调处理
+      description: 处理 OAuth 提供商的回调，完成登录流程
+      operationId: oauthCallback
+      parameters:
+        - $ref: '#/components/parameters/Provider'
+        - name: code
+          in: query
+          description: OAuth 授权码
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: CSRF 防护状态参数
+          required: true
+          schema:
+            type: string
+        - name: error
+          in: query
+          description: OAuth 错误（如果用户拒绝授权）
+          schema:
+            type: string
+          example: access_denied
+      responses:
+        '302':
+          description: 重定向到前端应用并携带令牌
+          headers:
+            Location:
+              description: 前端回调 URL（包含 access_token 等参数）
+              schema:
+                type: string
+                example: https://myapp.com/login/oauth/callback?access_token=xxx&refresh_token=yyy&user_id=zzz&username=www
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: OAuth 认证失败
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Invalid OAuth code or state
+
+  /auth/oauth/link:
+    post:
+      tags:
+        - OAuth
+      summary: 绑定 OAuth 账号
+      description: 将 OAuth 账号绑定到当前登录用户
+      operationId: linkOAuthAccount
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthLinkRequest'
+      responses:
+        '200':
+          description: 绑定成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account linked successfully
+                  provider:
+                    type: string
+                    example: github
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: OAuth 账号已绑定到其他用户
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: This OAuth account is already linked to another user
+
+  /auth/oauth/unlink:
+    post:
+      tags:
+        - OAuth
+      summary: 解绑 OAuth 账号
+      description: 解绑当前用户的 OAuth 账号
+      operationId: unlinkOAuthAccount
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthUnlinkRequest'
+      responses:
+        '200':
+          description: 解绑成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account unlinked successfully
+                  provider:
+                    type: string
+                    example: github
+        '400':
+          description: |
+            可能的错误情况：
+            - 请求参数错误
+            - 无法解绑唯一的认证方式
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalid_request:
+                  summary: 请求参数错误
+                  value:
+                    error: Provider is required
+                last_auth_method:
+                  summary: 无法解绑唯一的认证方式
+                  value:
+                    error: Cannot unlink the only authentication method
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/oauth/accounts:
+    get:
+      tags:
+        - OAuth
+      summary: 获取已绑定的 OAuth 账号
+      description: 获取当前用户所有已绑定的第三方账号
+      operationId: getLinkedAccounts
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedAccountsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Bearer Token 认证
+
+  parameters:
+    Provider:
+      name: provider
+      in: path
+      description: OAuth 提供商名称
+      required: true
+      schema:
+        type: string
+        enum: [github, wechat]
+        example: github
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 20
+          pattern: '^[a-zA-Z0-9_-]+$'
+          description: 用户名（3-20个字符，仅限字母、数字、下划线、连字符）
+          example: johndoe
+        email:
+          type: string
+          format: email
+          description: 邮箱地址
+          example: john@example.com
+        password:
+          type: string
+          minLength: 8
+          description: 密码（至少8个字符，包含小写字母和大写字母/数字/特殊字符）
+          example: SecurePass123!
+          format: password
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: 用户名或邮箱
+          example: john@example.com
+        password:
+          type: string
+          format: password
+          description: 密码
+          example: password123
+
+    RegisterResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: user_123abc
+            username:
+              type: string
+              example: johndoe
+            email:
+              type: string
+              format: email
+              example: john@example.com
+              nullable: true
+        message:
+          type: string
+          example: 注册成功
+
+    LoginResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+          description: JWT 访问令牌
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: 刷新令牌
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expiresIn:
+          type: string
+          description: 访问令牌有效期
+          example: 1h
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: 刷新令牌
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    RefreshTokenResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+          description: 新的访问令牌
+        refreshToken:
+          type: string
+          description: 新的刷新令牌（令牌轮换）
+        expiresIn:
+          type: string
+          description: 访问令牌有效期
+
+    ValidateTokenResponse:
+      type: object
+      required:
+        - valid
+        - user
+      properties:
+        valid:
+          type: boolean
+          const: true
+        user:
+          type: object
+          required:
+            - userId
+            - username
+          properties:
+            userId:
+              type: string
+              example: user_123abc
+            username:
+              type: string
+              example: johndoe
+
+    LogoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Logged out successfully
+
+    OAuthLinkRequest:
+      type: object
+      required:
+        - provider
+        - code
+        - state
+      properties:
+        provider:
+          type: string
+          enum: [github, wechat]
+          example: github
+        code:
+          type: string
+          description: OAuth 授权码
+        state:
+          type: string
+          description: 状态参数
+
+    OAuthUnlinkRequest:
+      type: object
+      required:
+        - provider
+      properties:
+        provider:
+          type: string
+          enum: [github, wechat]
+          example: github
+
+    LinkedAccountsResponse:
+      type: object
+      required:
+        - accounts
+      properties:
+        accounts:
+          type: array
+          items:
+            type: object
+            required:
+              - provider
+              - providerId
+              - connectedAt
+            properties:
+              provider:
+                type: string
+                enum: [github, wechat]
+                example: github
+              providerId:
+                type: string
+                description: OAuth 提供商的用户 ID
+                example: 123456
+              connectedAt:
+                type: string
+                format: date-time
+                example: 2024-01-15T10:30:00Z
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: 错误信息
+          example: Invalid credentials
+
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            validation_error:
+              summary: 验证失败
+              value:
+                error: 用户名、邮箱和密码都是必填项
+            invalid_format:
+              summary: 格式无效
+              value:
+                error: 邮箱格式无效
+            duplicate:
+              summary: 重复注册
+              value:
+                error: 用户名已被使用
+
+    Unauthorized:
+      description: 未授权或令牌无效
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalid_credentials:
+              summary: 凭据无效
+              value:
+                error: Invalid credentials
+            token_expired:
+              summary: 令牌过期
+              value:
+                error: Token expired
+            oauth_only:
+              summary: 仅支持 OAuth 登录
+              value:
+                error: This account uses OAuth login only. Please use the OAuth provider to login.
+
+    TooManyRequests:
+      description: 请求过于频繁（限流）
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Too many requests, please try again later
+
+    NotFound:
+      description: 资源未找到
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Unsupported provider: xxx
