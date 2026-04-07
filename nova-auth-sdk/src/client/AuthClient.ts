@@ -11,6 +11,13 @@ import type {
   RefreshTokenRequest,
   OAuthUrlResponse,
   LinkedAccountsResponse,
+  SmsSendRequest,
+  SmsSendResponse,
+  SmsLoginRequest,
+  SmsLoginResponse,
+  SmsRegisterRequest,
+  SmsRegisterResponse,
+  SmsStatsResponse,
 } from '../types';
 import { AuthError } from '../errors';
 import { TokenManager, createTokenStorage } from '../utils';
@@ -520,6 +527,140 @@ export class AuthClient {
         refreshToken: null,
         user: null,
       };
+    }
+  }
+
+  // ==================== SMS Methods ====================
+
+  /**
+   * Send SMS verification code
+   * @param phone - Phone number
+   * @param type - Type of SMS ('login' or 'register')
+   * @returns SMS send response
+   */
+  async sendSmsCode(phone: string, type: 'login' | 'register'): Promise<SmsSendResponse> {
+    try {
+      const response = await this.fetchWithTimeout('/auth/sms/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.defaultHeaders,
+        },
+        body: JSON.stringify({ phone, type } satisfies SmsSendRequest),
+      });
+
+      if (!response.ok) {
+        throw await AuthError.fromResponse(response);
+      }
+
+      return await response.json() as SmsSendResponse;
+    } catch (error) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      throw AuthError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Login with SMS verification code
+   * @param phone - Phone number
+   * @param code - Verification code received via SMS
+   * @returns Login response with access and refresh tokens
+   */
+  async smsLogin(phone: string, code: string): Promise<SmsLoginResponse> {
+    try {
+      const response = await this.fetchWithTimeout('/auth/sms/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.defaultHeaders,
+        },
+        body: JSON.stringify({ phone, code } satisfies SmsLoginRequest),
+      });
+
+      if (!response.ok) {
+        throw await AuthError.fromResponse(response);
+      }
+
+      const data = await response.json() as SmsLoginResponse;
+
+      // Store access token and refresh token
+      await this.tokenManager.setToken(data.accessToken);
+      await this.tokenManager.setRefreshToken(data.refreshToken);
+
+      return data;
+    } catch (error) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      throw AuthError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Register with SMS verification code
+   * @param phone - Phone number
+   * @param code - Verification code received via SMS
+   * @param username - Username for the new account
+   * @returns Registration response with user info and tokens
+   */
+  async smsRegister(phone: string, code: string, username: string): Promise<SmsRegisterResponse> {
+    try {
+      const response = await this.fetchWithTimeout('/auth/sms/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.defaultHeaders,
+        },
+        body: JSON.stringify({ phone, code, username } satisfies SmsRegisterRequest),
+      });
+
+      if (!response.ok) {
+        throw await AuthError.fromResponse(response);
+      }
+
+      const data = await response.json() as SmsRegisterResponse;
+
+      // Store access token and refresh token (auto-login after registration)
+      await this.tokenManager.setToken(data.accessToken);
+      await this.tokenManager.setRefreshToken(data.refreshToken);
+
+      return data;
+    } catch (error) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      throw AuthError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Get SMS statistics for a phone number
+   * @param phone - Phone number
+   * @returns SMS statistics including today's send count
+   */
+  async getSmsStats(phone: string): Promise<SmsStatsResponse> {
+    try {
+      const params = new URLSearchParams({ phone });
+      const response = await this.fetchWithTimeout(`/auth/sms/stats?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.defaultHeaders,
+        },
+      });
+
+      if (!response.ok) {
+        throw await AuthError.fromResponse(response);
+      }
+
+      return await response.json() as SmsStatsResponse;
+    } catch (error) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      throw AuthError.fromNetworkError(error);
     }
   }
 

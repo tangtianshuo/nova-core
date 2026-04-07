@@ -145,3 +145,71 @@ export interface OAuthLinkRequest {
 export interface OAuthUnlinkRequest {
   provider: string;
 }
+
+// ==================== SMS Types ====================
+
+/**
+ * SMS send request
+ */
+export interface SmsSendRequest {
+  phone: string;
+  type: 'login' | 'register';
+}
+
+/**
+ * SMS send response
+ */
+export interface SmsSendResponse {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * SMS login request
+ */
+export interface SmsLoginRequest {
+  phone: string;
+  code: string;
+}
+
+/**
+ * SMS login response
+ */
+export interface SmsLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
+}
+
+/**
+ * SMS register request
+ */
+export interface SmsRegisterRequest {
+  phone: string;
+  code: string;
+  username: string;
+}
+
+/**
+ * SMS register response
+ */
+export interface SmsRegisterResponse {
+  user: {
+    id: string;
+    username: string;
+    phone: string;
+  };
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
+  message: string;
+}
+
+/**
+ * SMS statistics response
+ */
+export interface SmsStatsResponse {
+  phone: string;
+  todaySendCount: number;
+  date: string;
+}

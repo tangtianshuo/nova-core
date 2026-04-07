@@ -23,6 +23,14 @@ export type {
   LinkedAccountsResponse,
   OAuthLinkRequest,
   OAuthUnlinkRequest,
+  // SMS types
+  SmsSendRequest,
+  SmsSendResponse,
+  SmsLoginRequest,
+  SmsLoginResponse,
+  SmsRegisterRequest,
+  SmsRegisterResponse,
+  SmsStatsResponse,
   // Common types
   AuthClientConfig,
   TokenStorage,
