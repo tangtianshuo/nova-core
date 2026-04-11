@@ -9,6 +9,7 @@ import {
   registerUser,
 } from './auth.service.js';
 import { config } from '../../config/index.js';
+import { logAuditEvent } from '../../lib/audit-logger.js';
 import type {
   LoginDto,
   LoginResponse,
@@ -39,6 +40,13 @@ export const register = async (
     // Create user
     const user = await registerUser(username, email, password);
 
+    logAuditEvent({
+      action: 'REGISTER_SUCCESS',
+      userId: user.id,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+    });
+
     // Generate tokens (auto-login after registration)
     const accessToken = generateAccessToken(user.id, user.username);
     const refreshToken = await createRefreshToken(user.id);
@@ -62,6 +70,12 @@ export const register = async (
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : '注册失败';
+    logAuditEvent({
+      action: 'REGISTER_FAILED',
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      metadata: { reason: message },
+    });
     res.status(400).json({ error: message });
   }
 };
@@ -91,6 +105,12 @@ export const login = async (
 
     // Generic error message for both not-found and wrong-password cases
     if (!user) {
+      logAuditEvent({
+        action: 'LOGIN_FAILED',
+        ip: req.ip,
+        userAgent: req.get('user-agent'),
+        metadata: { username, reason: 'user_not_found' },
+      });
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
@@ -104,6 +124,13 @@ export const login = async (
     // Verify password
     const isValidPassword = await verifyPassword(password, user.passwordHash);
     if (!isValidPassword) {
+      logAuditEvent({
+        action: 'LOGIN_FAILED',
+        userId: user.id,
+        ip: req.ip,
+        userAgent: req.get('user-agent'),
+        metadata: { username, reason: 'invalid_password' },
+      });
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
@@ -111,6 +138,13 @@ export const login = async (
     // Generate access token and refresh token
     const accessToken = generateAccessToken(user.id, user.username);
     const refreshToken = await createRefreshToken(user.id);
+
+    logAuditEvent({
+      action: 'LOGIN_SUCCESS',
+      userId: user.id,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+    });
 
     const response: LoginResponse = {
       accessToken,
@@ -204,6 +238,13 @@ export const logout = async (
     if (refreshToken) {
       await revokeRefreshToken(refreshToken);
     }
+
+    logAuditEvent({
+      action: 'LOGOUT',
+      userId: req.user?.userId,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+    });
 
     const response: LogoutResponse = {
       message: 'Logged out successfully',

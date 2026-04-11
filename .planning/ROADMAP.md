@@ -65,9 +65,9 @@
 **Depends on:** Phase 5
 **Requirements:** LOG-07, LOG-10, LOG-11, LOG-12, LOG-14
 **Status:** READY TO EXECUTE
-**Plans:** 2/2 plans
+**Plans:** 1/2 plans executed
 **Plan list:**
-- [ ] 07-01-PLAN.md — ECS format + redact config + audit logger instance (Wave 1)
+- [x] 07-01-PLAN.md — ECS format + redact config + audit logger instance (Wave 1)
 - [ ] 07-02-PLAN.md — Auth/SMS controller integration + compression wrapper (Wave 2)
 **Success Criteria** (what must be TRUE):
 1. 审计日志记录登录成功/失败、登出、短信发送/验证事件到 audit.log
@@ -84,7 +84,7 @@
 |-------|----------------|--------|-----------|
 | 5. Logger Foundation | 1/1 | Complete    | 2026-04-11 |
 | 6. Access & Error Logging + Rotation | 2/2 | Complete   | 2026-04-11 |
-| 7. Audit & Security Hardening | 0/2 | Not started | - |
+| 7. Audit & Security Hardening | 1/2 | In Progress|  |
 
 ---
 
