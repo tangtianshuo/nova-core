@@ -13,7 +13,7 @@
 
 - [x] **Phase 5: Logger Foundation** - 统一日志门面 + 结构化JSON日志基础设施 (completed 2026-04-11)
 - [x] **Phase 6: Access & Error Logging + Rotation** - HTTP访问日志、错误日志、日志轮转 (completed 2026-04-11)
-- [ ] **Phase 7: Audit & Security Hardening** - 审计日志、敏感字段过滤、ELK兼容
+- [x] **Phase 7: Audit & Security Hardening** - 审计日志、敏感字段过滤、ELK兼容 (completed 2026-04-11)
 
 ---
 
@@ -64,11 +64,11 @@
 
 **Depends on:** Phase 5
 **Requirements:** LOG-07, LOG-10, LOG-11, LOG-12, LOG-14
-**Status:** READY TO EXECUTE
-**Plans:** 1/2 plans executed
+**Status:** COMPLETE
+**Plans:** 2/2 plans complete
 **Plan list:**
-- [x] 07-01-PLAN.md — ECS format + redact config + audit logger instance (Wave 1)
-- [ ] 07-02-PLAN.md — Auth/SMS controller integration + compression wrapper (Wave 2)
+- [x] 07-01-PLAN.md — ECS format + redact config + audit logger instance (Wave 1) (COMPLETE)
+- [x] 07-02-PLAN.md — Auth/SMS controller integration + compression wrapper (Wave 2) (COMPLETE)
 **Success Criteria** (what must be TRUE):
 1. 审计日志记录登录成功/失败、登出、短信发送/验证事件到 audit.log
 2. 访问日志、错误日志、审计日志通过不同stream写入不同文件
@@ -84,7 +84,7 @@
 |-------|----------------|--------|-----------|
 | 5. Logger Foundation | 1/1 | Complete    | 2026-04-11 |
 | 6. Access & Error Logging + Rotation | 2/2 | Complete   | 2026-04-11 |
-| 7. Audit & Security Hardening | 1/2 | In Progress|  |
+| 7. Audit & Security Hardening | 2/2 | Complete   | 2026-04-11 |
 
 ---
 
@@ -98,10 +98,10 @@
 | LOG-04 | Phase 5 | Complete |
 | LOG-05 | Phase 6 | Complete |
 | LOG-06 | Phase 6 | Complete |
-| LOG-07 | Phase 7 | Pending (Plan 02) |
+| LOG-07 | Phase 7 | Complete (Plan 02) |
 | LOG-08 | Phase 6 | Complete |
 | LOG-09 | Phase 6 | Complete |
-| LOG-10 | Phase 7 | Pending (Plan 02) |
+| LOG-10 | Phase 7 | Complete (Plan 02) |
 | LOG-11 | Phase 7 | Pending (Plan 01) |
 | LOG-12 | Phase 7 | Pending (Plan 01) |
 | LOG-13 | Phase 5 | Complete |
