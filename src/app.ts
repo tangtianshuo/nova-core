@@ -7,6 +7,7 @@ import smsRoutes from './modules/sms/sms.routes.js';
 import { apiDocsRoutes } from './modules/api-docs/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { requestIdMiddleware } from './lib/request-id.js';
+import accessLogger from './middleware/access-log.middleware.js';
 
 const app = express();
 
@@ -22,6 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request ID middleware - must be before routes
 app.use(requestIdMiddleware);
+
+// Access log middleware - must be after requestId to capture request ID
+app.use(accessLogger);
 
 // Routes
 app.use('/auth', authRoutes);
