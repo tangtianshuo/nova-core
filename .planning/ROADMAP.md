@@ -44,7 +44,7 @@
 
 **Depends on:** Phase 5
 **Requirements:** LOG-05, LOG-06, LOG-08, LOG-09
-**Status:** READY TO EXECUTE
+**Status:** COMPLETE
 **Success Criteria** (what must be TRUE):
 1. 每次HTTP请求记录 access.log，包含 method/url/status/responseTime
 2. 系统错误和未捕获异常写入 error.log，与access.log分离
@@ -64,14 +64,17 @@
 
 **Depends on:** Phase 5
 **Requirements:** LOG-07, LOG-10, LOG-11, LOG-12, LOG-14
-**Status:** Not started
+**Status:** READY TO EXECUTE
+**Plans:** 2/2 plans
+**Plan list:**
+- [ ] 07-01-PLAN.md — ECS format + redact config + audit logger instance (Wave 1)
+- [ ] 07-02-PLAN.md — Auth/SMS controller integration + compression wrapper (Wave 2)
 **Success Criteria** (what must be TRUE):
 1. 审计日志记录登录成功/失败、登出、短信发送/验证事件到 audit.log
 2. 访问日志、错误日志、审计日志通过不同stream写入不同文件
 3. 轮转后的日志文件自动压缩为 .gz 格式
 4. 日志输出时自动过滤 password, token, code, refreshToken, secret 等敏感字段
 5. 日志格式包含 ELK/Splunk 兼容的标准字段（@timestamp, level, message等）
-**Plans:** TBD
 
 ---
 
@@ -81,7 +84,7 @@
 |-------|----------------|--------|-----------|
 | 5. Logger Foundation | 1/1 | Complete    | 2026-04-11 |
 | 6. Access & Error Logging + Rotation | 2/2 | Complete   | 2026-04-11 |
-| 7. Audit & Security Hardening | 0/1 | Not started | - |
+| 7. Audit & Security Hardening | 0/2 | Not started | - |
 
 ---
 
@@ -93,21 +96,20 @@
 | LOG-02 | Phase 5 | Complete |
 | LOG-03 | Phase 5 | Complete |
 | LOG-04 | Phase 5 | Complete |
-| LOG-05 | Phase 6 | Pending (Plan 01) |
-| LOG-06 | Phase 6 | Pending (Plan 01) |
-| LOG-07 | Phase 7 | Pending |
-| LOG-08 | Phase 6 | Pending (Plan 01) |
-| LOG-09 | Phase 6 | Pending (Plan 02) |
-| LOG-10 | Phase 7 | Pending |
-| LOG-11 | Phase 7 | Pending |
-| LOG-12 | Phase 7 | Pending |
+| LOG-05 | Phase 6 | Complete |
+| LOG-06 | Phase 6 | Complete |
+| LOG-07 | Phase 7 | Pending (Plan 02) |
+| LOG-08 | Phase 6 | Complete |
+| LOG-09 | Phase 6 | Complete |
+| LOG-10 | Phase 7 | Pending (Plan 02) |
+| LOG-11 | Phase 7 | Pending (Plan 01) |
+| LOG-12 | Phase 7 | Pending (Plan 01) |
 | LOG-13 | Phase 5 | Complete |
-| LOG-14 | Phase 7 | Pending |
+| LOG-14 | Phase 7 | Pending (Plan 01) |
 
 **Mapped:** 14/14 requirements
-**Completed:** 5/14 requirements (LOG-01, LOG-02, LOG-03, LOG-04, LOG-13)
-**In progress:** 0/14 requirements
-**Phase 6 coverage:** LOG-05, LOG-06, LOG-08, LOG-09 (4 requirements)
+**Completed:** 9/14 requirements (LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, LOG-08, LOG-09, LOG-13)
+**Phase 7 coverage:** LOG-07, LOG-10, LOG-11, LOG-12, LOG-14 (5 requirements)
 
 ---
 
