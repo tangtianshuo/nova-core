@@ -8,8 +8,12 @@ import { apiDocsRoutes } from './modules/api-docs/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { requestIdMiddleware } from './lib/request-id.js';
 import accessLogger from './middleware/access-log.middleware.js';
+import { setupGlobalErrorHandlers } from './server-global-error.js';
 
 const app = express();
+
+// Setup global error handlers (must be early to catch all errors)
+setupGlobalErrorHandlers();
 
 // Security middleware
 app.use(helmet());
