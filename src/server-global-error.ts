@@ -17,7 +17,7 @@ import { errorLogStream } from './lib/log-streams.js';
 const errorLogger = pino(errorLogStream);
 
 // 未处理的 Promise rejection
-process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
+process.on('unhandledRejection', (reason: unknown, _promise: Promise<unknown>) => {
   errorLogger.error({
     msg: 'Unhandled Rejection',
     error: {
