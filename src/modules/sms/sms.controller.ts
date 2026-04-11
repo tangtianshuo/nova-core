@@ -8,6 +8,7 @@ import { generateAccessToken, createRefreshToken } from '../auth/auth.service.js
 import { isValidUsername } from '../auth/auth.service.js';
 import prisma from '../../lib/prisma.js';
 import { config } from '../../config/index.js';
+import { logAuditEvent, AuditAction } from '../../lib/audit-logger.js';
 
 const CHINESE_PHONE_REGEX = /^1[3-9]\d{9}$/;
 export function isValidChinesePhone(phone: string): boolean {
@@ -33,6 +34,23 @@ async function createAuditLog(params: {
       ip: params.ip,
       userAgent: params.userAgent,
     },
+  });
+
+  // Also log to file for audit trail
+  const actionMap: Record<string, AuditAction> = {
+    send_success: 'SMS_SEND',
+    verify_success: 'SMS_VERIFY_SUCCESS',
+    verify_fail: 'SMS_VERIFY_FAILED',
+    locked: 'SMS_LOCKED',
+  };
+  const auditAction = actionMap[`${params.action}_${params.result}`] ||
+                      (`SMS_${params.action.toUpperCase()}` as AuditAction);
+  logAuditEvent({
+    action: auditAction,
+    phone: maskedPhone,
+    ip: params.ip,
+    userAgent: params.userAgent,
+    metadata: { result: params.result },
   });
 }
 
@@ -67,6 +85,13 @@ export const sendSmsCodeHandler = async (req: Request, res: Response): Promise<v
     const allowed = await canSendSms(phone);
     if (!allowed) {
       await createAuditLog({ phone, action: 'send', result: 'rate_limited', ip, userAgent });
+      logAuditEvent({
+        action: 'SMS_SEND',
+        phone: maskPhone(phone),
+        ip,
+        userAgent,
+        metadata: { result: 'rate_limited' },
+      });
       res.status(429).json({ error: '发送过于频繁，请稍后再试' });
       return;
     }
@@ -89,6 +114,13 @@ export const sendSmsCodeHandler = async (req: Request, res: Response): Promise<v
   } catch (error) {
     console.error('Send SMS error:', error);
     await createAuditLog({ phone: req.body.phone || '', action: 'send', result: 'failed', ip: req.ip, userAgent: req.get('user-agent') });
+    logAuditEvent({
+      action: 'SMS_SEND',
+      phone: maskPhone(req.body.phone || ''),
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      metadata: { result: 'failed', error: 'server_error' },
+    });
     res.status(500).json({ error: '短信发送失败' });
   }
 };
