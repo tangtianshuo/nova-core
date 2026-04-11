@@ -46,6 +46,7 @@ interface SmsConfig {
     accessKeySecret: string;
     signName: string;
     templateCode: string;
+    templateParam: string;
   };
   code: {
     length: number;
@@ -100,6 +101,7 @@ function loadConfigFile(): AppConfig {
           accessKeySecret: process.env.ALIYUN_SMS_ACCESS_KEY_SECRET ?? '',
           signName: process.env.ALIYUN_SMS_SIGN_NAME ?? '',
           templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE ?? '',
+          templateParam: process.env.ALIYUN_SMS_TEMPLATE_PARAM ?? '{"code":"##code##","min":"5"}',
         },
         code: {
           length: 6,
@@ -185,6 +187,7 @@ export const config = {
       accessKeySecret: process.env.ALIYUN_SMS_ACCESS_KEY_SECRET ?? '',
       signName: process.env.ALIYUN_SMS_SIGN_NAME ?? '',
       templateCode: process.env.ALIYUN_SMS_TEMPLATE_CODE ?? '',
+      templateParam: process.env.ALIYUN_SMS_TEMPLATE_PARAM ?? '{"code":"##code##","min":"5"}',
     },
     code: {
       length: 6,

@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import { createAndStoreSmsCode, getSmsCode, deleteSmsCode,
+import { createAndStoreSmsCode, verifySmsCode,
   canSendSms, recordSmsSend,
   isPhoneLocked, incrementFailCount, resetFailCount,
   getTodaySendCount, incrementSendCount,
   maskPhone } from './sms.service.js';
-import { sendSms } from './sms.sdk.js';
 import { generateAccessToken, createRefreshToken } from '../auth/auth.service.js';
 import { isValidUsername } from '../auth/auth.service.js';
 import prisma from '../../lib/prisma.js';
@@ -43,7 +42,7 @@ async function createAuditLog(params: {
  * Body: { phone: string, type: 'login' | 'register' }
  * Returns: { success: true, message: '验证码已发送' }
  */
-export const sendSmsCode = async (req: Request, res: Response): Promise<void> => {
+export const sendSmsCodeHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const { phone, type } = req.body;
     const ip = req.ip;
@@ -72,29 +71,25 @@ export const sendSmsCode = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // 生成并存储验证码
-    const code = await createAndStoreSmsCode(phone, type);
-
-    // 发送短信
-    const result = await sendSms(phone, code);
-
-    if (!result.success) {
-      console.error('SMS send failed:', result.error);
-      await createAuditLog({ phone, action: 'send', result: 'failed', ip, userAgent });
-      res.status(500).json({ error: '短信发送失败' });
-      return;
-    }
+    // 生成并发送验证码
+    const { actualCode } = await createAndStoreSmsCode(phone, type);
 
     // 记录发送时间、增量统计、创建审计日志
     await recordSmsSend(phone);
     await incrementSendCount(phone);
     await createAuditLog({ phone, action: 'send', result: 'success', ip, userAgent });
 
-    // 返回通用响应，不暴露手机号是否已注册
-    res.status(200).json({ success: true, message: '验证码已发送' });
+    // 返回响应
+    const response: Record<string, unknown> = { success: true, message: '验证码已发送' };
+    if (actualCode) {
+      response.actualCode = actualCode; // 仅开发模式
+    }
+
+    res.status(200).json(response);
   } catch (error) {
     console.error('Send SMS error:', error);
-    res.status(500).json({ error: '服务器错误' });
+    await createAuditLog({ phone: req.body.phone || '', action: 'send', result: 'failed', ip: req.ip, userAgent: req.get('user-agent') });
+    res.status(500).json({ error: '短信发送失败' });
   }
 };
 
@@ -128,9 +123,10 @@ export const smsLogin = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // 验证验证码 (使用login prefix)
-    const storedCode = await getSmsCode(phone, 'login');
-    if (!storedCode || storedCode !== code) {
+    // 验证验证码
+    const isValid = await verifySmsCode(phone, code, 'login');
+
+    if (!isValid) {
       // 增加失败计数
       const nowLocked = await incrementFailCount(phone);
       await createAuditLog({ phone, action: 'verify_fail', result: 'failed', ip, userAgent });
@@ -143,9 +139,8 @@ export const smsLogin = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // 验证成功：重置失败计数，删除验证码
+    // 验证成功：重置失败计数
     await resetFailCount(phone);
-    await deleteSmsCode(phone, 'login');
     await createAuditLog({ phone, action: 'verify_success', result: 'success', ip, userAgent });
 
     // 查找用户
@@ -205,9 +200,10 @@ export const smsRegister = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // 验证验证码 (使用register prefix)
-    const storedCode = await getSmsCode(phone, 'register');
-    if (!storedCode || storedCode !== code) {
+    // 验证验证码
+    const isValid = await verifySmsCode(phone, code, 'register');
+
+    if (!isValid) {
       // 增加失败计数
       const nowLocked = await incrementFailCount(phone);
       await createAuditLog({ phone, action: 'verify_fail', result: 'failed', ip, userAgent });
@@ -220,9 +216,8 @@ export const smsRegister = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // 验证成功：重置失败计数，删除验证码
+    // 验证成功：重置失败计数
     await resetFailCount(phone);
-    await deleteSmsCode(phone, 'register');
     await createAuditLog({ phone, action: 'verify_success', result: 'success', ip, userAgent });
 
     // 检查手机号是否已注册

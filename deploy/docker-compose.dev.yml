@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  # 开发模式应用服务
+  app-dev:
+    image: node:22-alpine
+    container_name: nova-core-app-dev
+    working_dir: /app
+    command: sh -c "npm install && npm run build && npm run start"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://nova:nova_password@postgres:5432/nova_core
+      REDIS_URL: redis://:redis_password@redis:6379
+      JWT_SECRET: nova-development-jwt-secret-key-change-in-production-32chars
+      JWT_ACCESS_EXPIRATION: 15m
+      JWT_REFRESH_EXPIRATION: 7d
+      # 阿里云短信配置（可选）
+      ALIYUN_SMS_ACCESS_KEY_ID: ${ALIYUN_SMS_ACCESS_KEY_ID:-}
+      ALIYUN_SMS_ACCESS_KEY_SECRET: ${ALIYUN_SMS_ACCESS_KEY_SECRET:-}
+      ALIYUN_SMS_SIGN_NAME: ${ALIYUN_SMS_SIGN_NAME:-}
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - nova-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

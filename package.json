@@ -19,8 +19,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@alicloud/credentials": "^2.4.4",
+    "@alicloud/dypnsapi20170525": "^2.0.0",
+    "@alicloud/dysmsapi20170525": "^4.5.1",
+    "@alicloud/openapi-client": "^0.4.15",
+    "@alicloud/pop-core": "^1.8.0",
     "@alicloud/sms-sdk": "^1.1.6",
     "@prisma/client": "^6.0.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
@@ -28,7 +34,8 @@
     "helmet": "^8.1.0",
     "ioredis": "^5.4.2",
     "js-yaml": "^4.1.0",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@redocly/cli": "^2.25.4",
@@ -39,10 +46,8 @@
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.0.0",
-    "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
     "prisma": "^6.0.0",
-    "swagger-ui-express": "^5.0.1",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "yamljs": "^0.3.0"

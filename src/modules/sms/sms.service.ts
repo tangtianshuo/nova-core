@@ -1,8 +1,10 @@
 import redis from '../../lib/redis.js';
 import { config } from '../../config/index.js';
+import { sendSms } from './sms.sdk.js';
 
-// 登录验证码: sms:code:login:{phone}
-// 注册验证码: sms:code:register:{phone}
+// ==================== 验证码存储 key 前缀 ====================
+
+// 存储验证码: sms:code:login:{phone} 或 sms:code:register:{phone}
 export const SMS_LOGIN_CODE_PREFIX = 'sms:code:login:';
 export const SMS_REGISTER_CODE_PREFIX = 'sms:code:register:';
 
@@ -53,21 +55,58 @@ export async function deleteSmsCode(phone: string, type: 'login' | 'register'): 
 }
 
 /**
- * 生成并存储验证码的主函数
- * 返回生成的验证码（供发送短信使用）
+ * 生成并发送验证码
+ * 返回是否发送成功
+ *
  * @param phone 手机号
  * @param type 验证码类型 ('login' | 'register')
+ * @returns actualCode 仅在未配置阿里云凭证时返回，供前端调试使用
  */
-export async function createAndStoreSmsCode(phone: string, type: 'login' | 'register'): Promise<string> {
-  const length = config.sms?.code?.length ?? 6;
-  const code = generateCode(length);
+export async function createAndStoreSmsCode(phone: string, type: 'login' | 'register'): Promise<{ actualCode?: string }> {
+  // 生成验证码
+  const code = generateCode();
+
+  // 发送短信
+  const result = await sendSms(phone, code);
+
+  if (!result.success) {
+    throw new Error(result.error ?? 'Failed to send SMS');
+  }
+
+  // 存储验证码用于后续验证
   await storeSmsCode(phone, code, type);
-  return code;
+
+  // 如果是模拟模式，返回验证码供调试
+  const isMockMode = !config.sms?.aliyun?.accessKeyId;
+  const actualCode = isMockMode ? code : undefined;
+
+  return { actualCode };
 }
 
-export { generateCode };
+/**
+ * 验证短信验证码（本地比对）
+ * @param phone 手机号
+ * @param code 用户输入的验证码
+ * @param type 验证码类型 ('login' | 'register')
+ */
+export async function verifySmsCode(phone: string, code: string, type: 'login' | 'register'): Promise<boolean> {
+  const storedCode = await getSmsCode(phone, type);
 
-// 安全相关 Redis key 前缀
+  if (!storedCode) {
+    return false;
+  }
+
+  if (storedCode === code) {
+    // 验证成功，删除验证码
+    await deleteSmsCode(phone, type);
+    return true;
+  }
+
+  return false;
+}
+
+// ==================== 安全相关 Redis key 前缀 ====================
+
 export const SMS_LAST_SEND_PREFIX = 'sms:last_send:';      // 60秒发送限制
 export const SMS_FAIL_COUNT_PREFIX = 'sms:fail_count:';    // 失败次数计数
 export const SMS_LOCKED_PREFIX = 'sms:locked:';            // 锁定标志

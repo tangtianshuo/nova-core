@@ -61,3 +61,27 @@ nova-auth-sdk/node_modules/
 
 # Web-demo
 web-demo/dist/
+
+# Docker
+.docker-compose.env
+docker-compose.override.yml
+
+# Docker 本地数据
+data/
+
+# Nginx
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
+nginx/logs/*.log
+
+# Backups
+*.sql
+*.tar.gz
+backup_*.sql
+postgres_backup_*.tar.gz
+
+# Deploy keys
+*.pem
+*.key
+deploy_key*

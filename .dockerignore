@@ -1,0 +1,51 @@
+# 依赖
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 构建输出
+dist
+build
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 测试
+coverage
+.nyc_output
+
+# 文档
+docs
+*.md
+!README.md
+
+# 规划文件
+.planning
+.claude
+
+# 其他
+.husky
+*.log
+
+# Web-demo 和 SDK（不需要打包到服务镜像）
+web-demo
+nova-auth-sdk

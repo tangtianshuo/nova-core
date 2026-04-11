@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { sendSmsCode, smsLogin, smsRegister, getSmsStats } from './sms.controller.js';
+import { sendSmsCodeHandler, smsLogin, smsRegister, getSmsStats } from './sms.controller.js';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ const router = Router();
  * Body: { phone: string, type: 'login' | 'register' }
  * Returns: { success: true, message: '验证码已发送' }
  */
-router.post('/send', sendSmsCode);
+router.post('/send', sendSmsCodeHandler);
 
 /**
  * POST /auth/sms/login

@@ -18,3 +18,10 @@ oauth:
 rateLimit:
   windowMs: 900000
   max: 5
+
+sms:
+  aliyun:
+    accessKeyId: "${ALIYUN_SMS_ACCESS_KEY_ID}"
+    accessKeySecret: "${ALIYUN_SMS_ACCESS_KEY_SECRET}"
+    signName: "${ALIYUN_SMS_SIGN_NAME}"
+    templateCode: "${ALIYUN_SMS_TEMPLATE_CODE}"
