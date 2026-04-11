@@ -12,7 +12,7 @@
 ## Phases
 
 - [x] **Phase 5: Logger Foundation** - 统一日志门面 + 结构化JSON日志基础设施 (completed 2026-04-11)
-- [ ] **Phase 6: Access & Error Logging + Rotation** - HTTP访问日志、错误日志、日志轮转
+- [x] **Phase 6: Access & Error Logging + Rotation** - HTTP访问日志、错误日志、日志轮转 (completed 2026-04-11)
 - [ ] **Phase 7: Audit & Security Hardening** - 审计日志、敏感字段过滤、ELK兼容
 
 ---
@@ -51,10 +51,10 @@
 3. 日志文件写入 logs/ 目录，目录不存在时自动创建
 4. 支持按日期分文件（每天一个日志文件）
 5. 支持按大小轮转（100MB/文件），超出后生成新文件
-**Plans:** 2/2 plans ready
+**Plans:** 2/2 plans complete
 **Plan list:**
 - [x] 06-01-PLAN.md — Log streams configuration + pino-http access log middleware + app integration
-- [ ] 06-02-PLAN.md — Error middleware enhancement + global error handlers + app integration
+- [x] 06-02-PLAN.md — Error middleware enhancement + global error handlers + app integration
 
 ---
 
@@ -80,7 +80,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Logger Foundation | 1/1 | Complete    | 2026-04-11 |
-| 6. Access & Error Logging + Rotation | 0/2 | Ready to execute | - |
+| 6. Access & Error Logging + Rotation | 2/2 | Complete   | 2026-04-11 |
 | 7. Audit & Security Hardening | 0/1 | Not started | - |
 
 ---
