@@ -46,6 +46,11 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Test endpoint to trigger error (for testing error logging)
+app.get('/test-error', (_req, res) => {
+  throw new Error('Test error for error logging');
+});
+
 // Error handler (must be last)
 app.use(errorHandler);
 
