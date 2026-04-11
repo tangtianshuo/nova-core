@@ -6,6 +6,7 @@ import oauthRoutes from './modules/oauth/oauth.routes.js';
 import smsRoutes from './modules/sms/sms.routes.js';
 import { apiDocsRoutes } from './modules/api-docs/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
+import { requestIdMiddleware } from './lib/request-id.js';
 
 const app = express();
 
@@ -18,6 +19,9 @@ app.use(cors());
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Request ID middleware - must be before routes
+app.use(requestIdMiddleware);
 
 // Routes
 app.use('/auth', authRoutes);
