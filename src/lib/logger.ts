@@ -32,11 +32,36 @@ const createPinoLogger = (): pino.Logger => {
     level: logLevel,
     base,
     transport,
-    // Ensure error logs include stack trace
+    // ECS-style timestamp for ELK compatibility
+    timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
     formatters: {
-      level: (label) => ({ level: label }),
+      level: (label) => ({ "log.level": label }),
+      bindings: (bindings) => ({
+        'service.name': bindings.service,
+        'host.name': bindings.hostname,
+        'process.pid': bindings.pid,
+      }),
     },
-    timestamp: pino.stdTimeFunctions.isoTime,
+    // Redact sensitive fields - LOG-12
+    redact: {
+      paths: [
+        'password',
+        'token',
+        'code',
+        'refreshToken',
+        'secret',
+        'authorization',
+        'req.headers.authorization',
+        'req.headers.x-api-key',
+        'body.password',
+        'body.token',
+        'body.code',
+        'body.refreshToken',
+        'body.secret',
+        'res.headers-set*',
+      ],
+      censor: '[REDACTED]',
+    },
   });
 };
 
