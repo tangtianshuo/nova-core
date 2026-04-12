@@ -1,31 +1,27 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export function OAuthCallback() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('处理登录中...');
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const handleCallback = async () => {
+      const searchParams = new URLSearchParams(window.location.search);
       const accessToken = searchParams.get('access_token');
       const refreshToken = searchParams.get('refresh_token');
-      const userId = searchParams.get('user_id');
-      const username = searchParams.get('username');
       const error = searchParams.get('error');
 
       if (error) {
         setStatus('error');
         setMessage(`登录失败: ${error}`);
-        setTimeout(() => navigate('/login'), 3000);
+        setTimeout(() => window.location.replace('/auth'), 3000);
         return;
       }
 
       if (!accessToken || !refreshToken) {
         setStatus('error');
         setMessage('未收到登录令牌');
-        setTimeout(() => navigate('/login'), 3000);
+        setTimeout(() => window.location.replace('/auth'), 3000);
         return;
       }
 
@@ -38,16 +34,16 @@ export function OAuthCallback() {
         setStatus('success');
         setMessage('登录成功！正在跳转...');
 
-        setTimeout(() => navigate('/'), 1500);
+        setTimeout(() => window.location.replace('/auth'), 1500);
       } catch (err) {
         setStatus('error');
         setMessage('保存登录信息失败');
-        setTimeout(() => navigate('/login'), 3000);
+        setTimeout(() => window.location.replace('/auth'), 3000);
       }
     };
 
     handleCallback();
-  }, [searchParams, navigate]);
+  }, []);
 
   return (
     <div className="oauth-callback-container">

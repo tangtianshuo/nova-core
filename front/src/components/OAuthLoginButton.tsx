@@ -3,7 +3,6 @@ import { useState } from 'react';
 interface OAuthLoginButtonProps {
   provider: 'github' | 'wechat';
   onLoginStart: () => void;
-  onLoginSuccess: () => void;
   onLoginError: (error: string) => void;
   disabled?: boolean;
 }
@@ -30,7 +29,6 @@ const PROVIDER_CONFIG = {
 export function OAuthLoginButton({
   provider,
   onLoginStart,
-  onLoginSuccess,
   onLoginError,
   disabled = false,
 }: OAuthLoginButtonProps) {
@@ -45,8 +43,8 @@ export function OAuthLoginButton({
       // Get OAuth URL from SDK
       // Note: In a real implementation, you would call authClient.getOAuthUrl(provider)
       // For now, we'll redirect to the backend endpoint directly
-      const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-      const redirectUrl = window.location.origin + '/login/oauth/callback';
+      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const redirectUrl = window.location.origin + '/auth';
       const authUrl = `${backendUrl}/auth/oauth/${provider}/login?redirect_uri=${encodeURIComponent(redirectUrl)}`;
 
       // Store state to verify callback

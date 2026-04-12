@@ -64,12 +64,12 @@ npm start
 npm run dev
 
 # Terminal 2: 启动 Web Demo
-cd web-demo
+cd front
 npm install
 npm run dev
 ```
 
-访问 `http://localhost:5173` 进行登录测试。
+访问 `http://localhost:5173/auth` 进行登录测试。
 
 ---
 

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nova-agents - 让每个人都有一个懂你、能替你干活的桌面 AI Agent</title>
+    <meta
+      name="description"
+      content="nova-agents 是一款开源桌面端 AI Agent 产品，基于 Claude Agent SDK 构建，同时具备强大的人机协作能力和灵活的 IM Bot 交互。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind = window.tailwind || {};
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              glass: {
+                white: 'rgba(255, 255, 255, 0.03)',
+                whiteHover: 'rgba(255, 255, 255, 0.07)',
+                border: 'rgba(255, 255, 255, 0.06)',
+                borderHover: 'rgba(255, 255, 255, 0.12)',
+              },
+              brand: {
+                primary: '#818cf8',
+                secondary: '#a5b4fc',
+                accent: '#34d399',
+                glow: '#6366f1',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="text-zinc-200 overflow-x-hidden">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

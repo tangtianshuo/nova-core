@@ -33,7 +33,7 @@ nova-core/
 ├── nova-auth-sdk/         # 客户端 SDK
 │   ├── src/               # SDK 源码
 │   └── dist/              # 编译输出
-├── web-demo/              # Web 示例应用
+├── front/                 # 前端（产品介绍页 + 下载页 + 认证演示）
 ├── prisma/                # 数据库 Schema
 ├── scripts/               # 工具脚本
 ├── docs/                  # 文档

@@ -31,10 +31,6 @@ export function LoginForm({ onSubmit, loading = false, onSwitchToRegister, onSwi
     // OAuth login is redirecting to provider
   };
 
-  const handleOAuthLoginSuccess = () => {
-    // This will be handled by the callback page
-  };
-
   const handleOAuthLoginError = (error: string) => {
     console.error('OAuth login error:', error);
   };
@@ -92,7 +88,6 @@ export function LoginForm({ onSubmit, loading = false, onSwitchToRegister, onSwi
           <OAuthLoginButton
             provider="github"
             onLoginStart={handleOAuthLoginStart}
-            onLoginSuccess={handleOAuthLoginSuccess}
             onLoginError={handleOAuthLoginError}
             disabled={loading || submitting}
           />
