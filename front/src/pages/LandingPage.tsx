@@ -147,6 +147,9 @@ export default function LandingPage() {
 						基于 Claude Agent SDK 构建，同时具备强大的人机协作能力和灵活的 IM
 						Bot 交互——二合一，一键安装，零门槛。
 					</p>
+					<p className="text-center text-[14px] font-medium italic tracking-wide text-zinc-400 mb-10">
+						“一念既起，万事皆成”
+					</p>
 
 					<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
 						<a
@@ -1217,6 +1220,32 @@ export default function LandingPage() {
 								</svg>
 								技术文档
 							</a>
+						</div>
+					</div>
+				</section>
+
+				<section className="mb-20">
+					<div className="glass-card rounded-3xl p-8 feature-shine">
+						<h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
+							<span className="text-gradient">致谢</span>
+						</h2>
+						<div className="max-w-3xl mx-auto space-y-4">
+							<p className="text-zinc-400 leading-relaxed">
+								<a
+									href="https://github.com/hAcKlyc/MyAgents"
+									target="_blank"
+									rel="noreferrer"
+									className="font-semibold text-brand-secondary hover:text-white transition-colors"
+								>
+									MyAgents
+								</a>
+								{" "}
+								是这个项目的起点与基石。其开创性的架构启发了 nova-agents
+								的诞生。我们在其基础上进行了面向桌面端场景的深度重构，并以更优雅的方式实现了全新的交互范式。
+							</p>
+							<p className="text-center text-[14px] font-medium italic tracking-wide text-zinc-400">
+								站在巨人的肩上，我们致力于青出于蓝。
+							</p>
 						</div>
 					</div>
 				</section>
