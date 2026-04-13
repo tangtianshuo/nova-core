@@ -2,11 +2,29 @@ import { useVersion } from '../../hooks';
 
 const GITHUB_URL = 'https://github.com/tangtianshuo/nova-agents';
 
+const navLinks = [
+	{ href: '#features', label: '核心能力' },
+	{ href: '#download', label: '下载' },
+	{ href: '#providers', label: '模型' },
+	{ href: '#architecture', label: '架构' },
+	{ href: GITHUB_URL, label: 'GitHub', external: true },
+];
+
+const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+	if (href.startsWith('#')) {
+		e.preventDefault();
+		const target = document.querySelector(href);
+		if (target) {
+			target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+	}
+};
+
 export function Navbar() {
 	const { versionInfo } = useVersion();
 
 	return (
-		<nav className="fixed top-4 left-4 right-4 z-50 rounded-2xl px-6 py-4" style={{background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.2)'}}>
+		<nav className="fixed top-4 left-4 right-4 z-50 rounded-2xl px-6 py-4" style={{background: 'rgb(96 96 96 / 30%)', backdropFilter: 'blur(1px)', WebkitBackdropFilter: 'blur(1px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
 			<div className="flex items-center justify-between max-w-7xl mx-auto">
 				<div className="flex items-center gap-4">
 					<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary via-indigo-500 to-purple-600 flex items-center justify-center glow-primary">
@@ -28,43 +46,24 @@ export function Navbar() {
 				</div>
 
 				<div className="hidden md:flex items-center gap-1">
-					<a
-						href="#features"
-						className="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white"
-					>
-						核心能力
-					</a>
-					<a
-						href="#download"
-						className="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white"
-					>
-						下载
-					</a>
-					<a
-						href="#providers"
-						className="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white"
-					>
-						模型
-					</a>
-					<a
-						href="#architecture"
-						className="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white"
-					>
-						架构
-					</a>
-					<a
-						href={GITHUB_URL}
-						target="_blank"
-						rel="noreferrer"
-						className="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white"
-					>
-						GitHub
-					</a>
+					{navLinks.map((link) => (
+						<a
+							key={link.href}
+							href={link.href}
+							target={link.external ? '_blank' : undefined}
+							rel={link.external ? 'noreferrer' : undefined}
+							onClick={(e) => handleNavClick(e, link.href)}
+							className="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white"
+						>
+							{link.label}
+						</a>
+					))}
 				</div>
 
 				<div className="flex items-center gap-3">
 					<a
 						href="#download"
+						onClick={(e) => handleNavClick(e, '#download')}
 						className="hidden md:flex px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-primary to-indigo-500 text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow"
 					>
 						免费下载 {versionInfo?.version && `v${versionInfo.version}`}

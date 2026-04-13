@@ -40,23 +40,24 @@ export function Footer() {
 						<h4 className="font-medium text-zinc-200 mb-4">资源</h4>
 						<ul className="space-y-2 text-sm text-zinc-400">
 							<li>
-								<a href="#features" className="hover:text-white transition-colors">
+								<a href="#features" onClick={(e) => { e.preventDefault(); document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }} className="hover:text-white transition-colors">
 									核心能力
 								</a>
 							</li>
 							<li>
-								<a href="#download" className="hover:text-white transition-colors">
+								<a href="#download" onClick={(e) => { e.preventDefault(); document.querySelector('#download')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }} className="hover:text-white transition-colors">
 									下载
 								</a>
 							</li>
 							<li>
-								<a href="#providers" className="hover:text-white transition-colors">
+								<a href="#providers" onClick={(e) => { e.preventDefault(); document.querySelector('#providers')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }} className="hover:text-white transition-colors">
 									模型供应商
 								</a>
 							</li>
 							<li>
 								<a
 									href="#architecture"
+									onClick={(e) => { e.preventDefault(); document.querySelector('#architecture')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}
 									className="hover:text-white transition-colors"
 								>
 									技术架构

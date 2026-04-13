@@ -46,6 +46,10 @@ export function HeroSection() {
 				</a>
 				<a
 					href="#features"
+					onClick={(e) => {
+						e.preventDefault();
+						document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					}}
 					className="w-full sm:w-auto px-8 py-4 rounded-full glass-card font-semibold text-lg hover:bg-white/10 transition-all cursor-pointer text-zinc-200 flex items-center justify-center gap-2"
 				>
 					了解功能

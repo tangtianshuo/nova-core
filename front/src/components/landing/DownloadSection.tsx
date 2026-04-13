@@ -3,7 +3,7 @@ import { useDownload } from '../../hooks';
 const GITHUB_URL = 'https://github.com/tangtianshuo/nova-agents';
 
 export function DownloadSection() {
-	const { downloadWindows, downloadMacOS, downloading, versionInfo } = useDownload();
+	const { downloadWindows, downloadMacOS, downloadStatus, versionInfo } = useDownload();
 
 	return (
 		<section id="download" className="mb-20">
@@ -185,11 +185,11 @@ export function DownloadSection() {
 					<button
 						type="button"
 						onClick={downloadWindows}
-						disabled={downloading === 'windows'}
+						disabled={downloadStatus === 'getting_link' || downloadStatus === 'downloading'}
 						className="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold text-lg hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center justify-center gap-2 disabled:opacity-50"
 					>
 						<svg
-							className={`w-5 h-5 ${downloading === 'windows' ? 'animate-spin' : ''}`}
+							className={`w-5 h-5 ${(downloadStatus === 'getting_link' || downloadStatus === 'downloading') ? 'animate-spin' : ''}`}
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -201,12 +201,12 @@ export function DownloadSection() {
 								d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
 							/>
 						</svg>
-						{downloading === 'windows' ? '获取下载链接...' : '下载 for Windows'}
+						{downloadStatus === 'getting_link' ? '获取下载链接...' : downloadStatus === 'downloading' ? '正在下载...' : downloadStatus === 'error' ? '下载失败，请重试' : '下载 for Windows'}
 					</button>
 					<p className="text-center text-xs text-zinc-500 mt-3">
 						{versionInfo?.version
 							? `v${versionInfo.version}${
-									versionInfo.pubDate ? ` · 更新于 ${versionInfo.pubDate}` : ''
+									versionInfo.pub_date ? ` · 更新于 ${versionInfo.pub_date}` : ''
 								}`
 							: 'v0.1.57 · NSIS · ~78MB'}
 					</p>
