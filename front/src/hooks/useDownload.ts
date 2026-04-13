@@ -11,6 +11,7 @@ export function useDownload() {
 	const [versionInfo, setVersionInfo] = useState<{
 		version?: string;
 		pub_date?: string;
+		pubDateFormatted?: string;
 		downloads?: {
 			win_x64?: { url: string };
 		};
@@ -20,17 +21,28 @@ export function useDownload() {
 		setDownloadStatus('getting_link');
 
 		try {
-			const response = await fetch('/api/version/latest');
+			const response = await fetch('https://download.novai.net.cn/update/latest_win.json');
 			if (!response.ok) {
 				throw new Error('获取版本信息失败');
 			}
 			const data = await response.json();
-			setVersionInfo(data);
+			setVersionInfo({
+				...data,
+				pubDateFormatted: data.pub_date
+					? new Date(data.pub_date).toLocaleDateString('zh-CN')
+					: undefined,
+			});
 
-			const downloadUrl = data.downloads?.win_x64?.url;
-			if (!downloadUrl) {
+			const originalUrl = data.downloads?.win_x64?.url;
+			if (!originalUrl) {
 				throw new Error('未找到 Windows 下载链接');
 			}
+
+			// 替换下载链接的 domain 为 download.novai.net.cn
+			const downloadUrl = originalUrl.replace(
+				/^https?:\/\/[^/]+/,
+				'https://download.novai.net.cn'
+			);
 
 			setDownloadStatus('downloading');
 

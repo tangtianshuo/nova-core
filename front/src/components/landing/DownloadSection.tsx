@@ -2,8 +2,19 @@ import { useDownload } from '../../hooks';
 
 const GITHUB_URL = 'https://github.com/tangtianshuo/nova-agents';
 
-export function DownloadSection() {
-	const { downloadWindows, downloadMacOS, downloadStatus, versionInfo } = useDownload();
+interface DownloadSectionProps {
+	versionInfo?: {
+		version: string;
+		pubDate?: string;
+		pubDateFormatted?: string;
+		downloads?: {
+			win_x64?: { url: string };
+		};
+	} | null;
+}
+
+export function DownloadSection({ versionInfo }: DownloadSectionProps) {
+	const { downloadWindows, downloadMacOS, downloadStatus } = useDownload();
 
 	return (
 		<section id="download" className="mb-20">
@@ -206,7 +217,7 @@ export function DownloadSection() {
 					<p className="text-center text-xs text-zinc-500 mt-3">
 						{versionInfo?.version
 							? `v${versionInfo.version}${
-									versionInfo.pub_date ? ` · 更新于 ${versionInfo.pub_date}` : ''
+									versionInfo.pubDateFormatted ? ` · 更新于 ${versionInfo.pubDateFormatted}` : ''
 								}`
 							: 'v0.1.57 · NSIS · ~78MB'}
 					</p>

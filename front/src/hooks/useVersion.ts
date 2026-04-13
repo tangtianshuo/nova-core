@@ -8,7 +8,7 @@ interface VersionInfo {
 	};
 }
 
-const VERSION_API_URL = '/api/version/latest';
+const VERSION_API_URL = 'https://download.novai.net.cn/update/latest_win.json';
 
 export function useVersion() {
 	const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);

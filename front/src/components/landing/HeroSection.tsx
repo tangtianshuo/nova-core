@@ -1,8 +1,14 @@
-import { useVersion } from '../../hooks';
+interface HeroSectionProps {
+	versionInfo?: {
+		version: string;
+		pubDate: string;
+		downloads?: {
+			win_x64?: { url: string };
+		};
+	} | null;
+}
 
-export function HeroSection() {
-	const { versionInfo } = useVersion();
-
+export function HeroSection({ versionInfo }: HeroSectionProps) {
 	return (
 		<section className="text-center mb-20">
 			<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8">
