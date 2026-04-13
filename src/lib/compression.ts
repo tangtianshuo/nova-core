@@ -16,53 +16,24 @@ import { readdir, stat } from 'fs/promises';
 import { join } from 'path';
 
 /**
- * Compress a file to .gz format
- *
- * @param sourcePath - Path to the source file
- * @returns Path to the compressed file
+ * Compress a file to .gz format and optionally delete the original
  */
-export async function compressFile(sourcePath: string): Promise<string> {
-  const compressedPath = sourcePath + '.gz';
-  const gzip = createGzip({ level: 6 }); // Good balance of speed/size
+async function compressAndDelete(filePath: string): Promise<string> {
+  const compressedPath = filePath + '.gz';
+  const gzip = createGzip({ level: 6 });
 
   await pipeline(
-    createReadStream(sourcePath),
+    createReadStream(filePath),
     gzip,
     createWriteStream(compressedPath)
   );
 
-  return compressedPath;
-}
-
-/**
- * Delete original file after successful compression
- */
-async function deleteOriginal(sourcePath: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    unlink(sourcePath, (err) => {
+  await new Promise<void>((resolve, reject) => {
+    unlink(filePath, (err) => {
       if (err) reject(err);
       else resolve();
     });
   });
-}
-
-/**
- * Compress a rotated log file and optionally delete the original
- *
- * @param sourcePath - Path to the rotated log file
- * @param options - Compression options
- * @param options.deleteOriginal - Whether to delete the original file after compression
- * @returns Path to the compressed file
- */
-export async function compressRotatedFile(
-  sourcePath: string,
-  options: { deleteOriginal?: boolean } = {}
-): Promise<string> {
-  const compressedPath = await compressFile(sourcePath);
-
-  if (options.deleteOriginal) {
-    await deleteOriginal(sourcePath);
-  }
 
   return compressedPath;
 }
@@ -118,7 +89,7 @@ export async function createCompressionWatcher(
           if (ageHours >= maxAgeHours) {
             processedFiles.add(filePath);
             try {
-              await compressRotatedFile(filePath, { deleteOriginal: true });
+              await compressAndDelete(filePath);
               console.log(`Compressed: ${filePath} -> ${filePath}.gz`);
             } catch (err) {
               console.error(`Compression failed for ${filePath}:`, err);
