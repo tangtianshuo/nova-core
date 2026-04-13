@@ -8,6 +8,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@tailwindcss/postcss": "^4.2.2",
 		"nova-auth-sdk": "file:../nova-auth-sdk",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
