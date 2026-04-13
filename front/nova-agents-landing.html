@@ -170,6 +170,32 @@
     .progress-bar {
       animation: progress 2s ease-in-out infinite;
     }
+    /* Toast */
+    @keyframes toastIn {
+      0% { opacity: 0; transform: translateY(-20px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-20px) scale(0.9); }
+    }
+    .toast {
+      animation: toastIn 0.3s ease-out forwards;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.95), rgba(139, 92, 246, 0.95));
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
+    }
+    .toast.hiding {
+      animation: toastOut 0.3s ease-in forwards;
+    }
+    .toast-icon {
+      animation: bounce 1s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
   </style>
 </head>
 <body class="text-zinc-200 overflow-x-hidden">
@@ -200,7 +226,7 @@
         <a href="#download" class="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white">下载</a>
         <a href="#providers" class="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white">模型</a>
         <a href="#architecture" class="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white">架构</a>
-        <a href="https://github.com/nova-agents/nova-agents" target="_blank" class="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white">GitHub</a>
+        <a href="https://github.com/tangtianshuo/nova-agents" target="_blank" class="px-4 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 text-sm font-medium cursor-pointer text-zinc-300 hover:text-white">GitHub</a>
       </div>
       <div class="flex items-center gap-3">
         <a href="#download" class="hidden md:flex px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-primary to-indigo-500 text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow">
@@ -221,7 +247,7 @@
       <!-- Badge -->
       <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-sm text-zinc-300">v0.1.57 现已发布</span>
+        <span id="heroVersionBadge" class="text-sm text-zinc-300">v0.1.57 现已发布</span>
         <span class="text-xs text-zinc-500 ml-2">Apache-2.0 开源</span>
       </div>
 
@@ -546,13 +572,13 @@
               DMG 安装包
             </div>
           </div>
-          <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold text-lg hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center justify-center gap-2">
+          <button id="downloadMacBtn" onclick="showMacOSNotice()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold text-lg hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
             下载 for macOS
           </button>
-          <p class="text-center text-xs text-zinc-500 mt-3">v0.1.57 · DMG · ~85MB</p>
+          <p id="macosVersionInfo" class="text-center text-xs text-zinc-500 mt-3">v0.1.57 · DMG · ~85MB</p>
         </div>
 
         <!-- Windows Download -->
@@ -588,13 +614,13 @@
               便携版可用
             </div>
           </div>
-          <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold text-lg hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button id="downloadWinBtn" onclick="downloadWin()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold text-lg hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center justify-center gap-2">
+            <svg id="downloadWinIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
-            下载 for Windows
+            <span id="downloadWinText">下载 for Windows</span>
           </button>
-          <p class="text-center text-xs text-zinc-500 mt-3">v0.1.57 · NSIS · ~78MB</p>
+          <p id="winVersionInfo" class="text-center text-xs text-zinc-500 mt-3">v0.1.57 · NSIS · ~78MB</p>
         </div>
       </div>
 
@@ -608,7 +634,7 @@
           <a href="#" class="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer">
             Homebrew
           </a>
-          <a href="https://github.com/nova-agents/nova-agents" target="_blank" class="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer flex items-center gap-2">
+          <a href="https://github.com/tangtianshuo/nova-agents" target="_blank" class="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer flex items-center gap-2">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2 .665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
             </svg>
@@ -815,7 +841,7 @@
           nova-agents 是开源项目，代码完全透明，欢迎贡献和定制
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="https://github.com/nova-agents/nova-agents" target="_blank" class="px-6 py-3 rounded-full bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center gap-2">
+          <a href="https://github.com/tangtianshuo/nova-agents" target="_blank" class="px-6 py-3 rounded-full bg-gradient-to-r from-brand-primary to-indigo-500 font-semibold hover:opacity-90 transition-opacity cursor-pointer text-white btn-glow flex items-center gap-2">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
             </svg>
@@ -863,9 +889,9 @@
         <div>
           <h4 class="font-medium text-zinc-200 mb-4">社区</h4>
           <ul class="space-y-2 text-sm text-zinc-400">
-            <li><a href="https://github.com/nova-agents/nova-agents" target="_blank" class="hover:text-white transition-colors">GitHub</a></li>
+            <li><a href="https://github.com/tangtianshuo/nova-agents" target="_blank" class="hover:text-white transition-colors">GitHub</a></li>
             <li><a href="https://novaagents.io" target="_blank" class="hover:text-white transition-colors">官网</a></li>
-            <li><a href="https://github.com/nova-agents/nova-agents/issues" target="_blank" class="hover:text-white transition-colors">问题反馈</a></li>
+            <li><a href="https://github.com/tangtianshuo/nova-agents/issues" target="_blank" class="hover:text-white transition-colors">问题反馈</a></li>
             <li><a href="specs/tech_docs/architecture.md" class="hover:text-white transition-colors">文档</a></li>
           </ul>
         </div>
@@ -873,12 +899,15 @@
       <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
         <p class="text-sm text-zinc-500">© 2026 nova-agents. Apache License 2.0</p>
         <div class="flex items-center gap-4">
-          <span class="px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-medium">v0.1.57</span>
+          <span id="footerVersionBadge" class="px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-medium">v0.1.57</span>
           <span class="px-3 py-1 rounded-lg bg-white/5 text-zinc-400 text-xs">macOS · Windows</span>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed top-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none"></div>
 
   <!-- Back to Top Button -->
   <button id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 rounded-full glass-card hover:bg-white/10 transition-all cursor-pointer flex items-center justify-center opacity-0 pointer-events-none" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
@@ -910,6 +939,115 @@
         }
       });
     });
+
+    // Toast notification
+    function showToast(message, icon = '🔧') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast px-5 py-3 rounded-xl flex items-center gap-3 text-white text-sm font-medium shadow-lg';
+      toast.innerHTML = `<span class="toast-icon text-lg">${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      // Auto remove after 3s
+      setTimeout(() => {
+        toast.classList.add('hiding');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // macOS download notice
+    function showMacOSNotice() {
+      showToast('macOS 版本正在加班加点开发中，敬请期待呀～ 🚀', '⌛');
+    }
+
+    // Fetch version info on page load
+    async function fetchVersionInfo() {
+      try {
+        const response = await fetch('/api/version/latest');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        // Update all version badges
+        const version = data.version || '0.0.0';
+        const pubDate = data.pub_date ? new Date(data.pub_date).toLocaleDateString('zh-CN') : '';
+
+        const heroBadge = document.getElementById('heroVersionBadge');
+        if (heroBadge && version) {
+          heroBadge.textContent = `v${version} 现已发布`;
+        }
+
+        const footerBadge = document.getElementById('footerVersionBadge');
+        if (footerBadge && version) {
+          footerBadge.textContent = `v${version}`;
+        }
+
+        const winVersionInfo = document.getElementById('winVersionInfo');
+        if (winVersionInfo && version) {
+          winVersionInfo.textContent = `v${version} · NSIS · 更新于 ${pubDate}`;
+        }
+
+        const macosVersionInfo = document.getElementById('macosVersionInfo');
+        if (macosVersionInfo && version) {
+          macosVersionInfo.textContent = `v${version} · DMG · ~85MB`;
+        }
+      } catch (error) {
+        console.error('Failed to fetch version info:', error);
+      }
+    }
+
+    // Windows download - fetch latest version info first
+    async function downloadWin() {
+      const btn = document.getElementById('downloadWinBtn');
+      const icon = document.getElementById('downloadWinIcon');
+      const text = document.getElementById('downloadWinText');
+      const versionInfo = document.getElementById('winVersionInfo');
+
+      // Prevent double-click
+      btn.disabled = true;
+      icon.classList.add('animate-spin');
+      text.textContent = '获取下载链接...';
+
+      try {
+        const response = await fetch('/api/version/latest');
+        if (!response.ok) {
+          throw new Error('获取版本信息失败');
+        }
+        const data = await response.json();
+        const downloadUrl = data.downloads?.win_x64?.url;
+
+        if (!downloadUrl) {
+          throw new Error('未找到 Windows 下载链接');
+        }
+
+        // Update version info
+        if (data.version) {
+          versionInfo.textContent = `v${data.version} · NSIS · 更新于 ${new Date(data.pub_date).toLocaleDateString('zh-CN')}`;
+        }
+
+        // Trigger download
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = downloadUrl.split('/').pop();
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        text.textContent = '正在下载...';
+      } catch (error) {
+        console.error('Download error:', error);
+        text.textContent = '下载失败，请重试';
+        setTimeout(() => {
+          text.textContent = '下载 for Windows';
+          btn.disabled = false;
+        }, 2000);
+      } finally {
+        icon.classList.remove('animate-spin');
+      }
+    }
+
+    // Fetch version info when page loads
+    fetchVersionInfo();
   </script>
 </body>
 </html>

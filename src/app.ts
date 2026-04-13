@@ -5,6 +5,7 @@ import { join } from 'path';
 import authRoutes from './modules/auth/auth.routes.js';
 import oauthRoutes from './modules/oauth/oauth.routes.js';
 import smsRoutes from './modules/sms/sms.routes.js';
+import versionRoutes from './modules/version/version.routes.js';
 import { apiDocsRoutes } from './modules/api-docs/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { requestIdMiddleware } from './lib/request-id.js';
@@ -36,6 +37,7 @@ app.use(accessLogger);
 // Routes
 app.use('/auth', authRoutes);
 app.use('/auth/sms', smsRoutes);
+app.use('/api/version', versionRoutes);
 app.use('/', oauthRoutes);
 
 // API Documentation (Swagger UI)
