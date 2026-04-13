@@ -20,13 +20,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build nova-auth-sdk
-        run: |
-          cd nova-auth-sdk
-          npm install
-          npm run build
-          cd ..
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
