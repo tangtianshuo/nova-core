@@ -3,6 +3,7 @@ const features = [
 		title: 'Chrome 风格多标签页',
 		description: '每个 Tab 独立运行一个 Agent，真正的并行工作流，互不干扰',
 		gradient: 'from-violet-600 to-purple-700',
+		shadowClass: 'shadow-violet-500/20',
 		icon: (
 			<path
 				strokeLinecap="round"
@@ -16,6 +17,7 @@ const features = [
 		title: 'MCP 工具集成',
 		description: '内置 MCP 协议支持（STDIO/HTTP/SSE），连接外部工具和数据源',
 		gradient: 'from-indigo-600 to-blue-700',
+		shadowClass: 'shadow-indigo-500/20',
 		icon: (
 			<path
 				strokeLinecap="round"
@@ -29,6 +31,7 @@ const features = [
 		title: 'Skills 技能系统',
 		description: '内置和自定义技能，一键触发常用操作，让 Agent 越用越懂你',
 		gradient: 'from-emerald-600 to-teal-700',
+		shadowClass: 'shadow-emerald-500/20',
 		icon: (
 			<path
 				strokeLinecap="round"
@@ -42,6 +45,7 @@ const features = [
 		title: 'IM 聊天机器人',
 		description: '接入 Telegram / 钉钉 / OpenClaw 社区插件，多 Bot 管理',
 		gradient: 'from-amber-600 to-orange-700',
+		shadowClass: 'shadow-amber-500/20',
 		icon: (
 			<path
 				strokeLinecap="round"
@@ -55,6 +59,7 @@ const features = [
 		title: '智能权限管理',
 		description: 'Act / Plan / Auto 三种模式，安全可控，自主决定 AI 操作权限',
 		gradient: 'from-rose-600 to-pink-700',
+		shadowClass: 'shadow-rose-500/20',
 		icon: (
 			<path
 				strokeLinecap="round"
@@ -68,6 +73,7 @@ const features = [
 		title: '本地数据隐私',
 		description: '所有对话、文件、记忆存在本地，隐私有保障，完全开源',
 		gradient: 'from-cyan-600 to-blue-700',
+		shadowClass: 'shadow-cyan-500/20',
 		icon: (
 			<path
 				strokeLinecap="round"
@@ -98,22 +104,7 @@ export function FeaturesSection() {
 						className="glass-card rounded-2xl p-6 feature-shine"
 					>
 						<div
-							className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 shadow-lg`}
-							style={{
-								boxShadow: `0 8px 32px rgba(${
-									feature.gradient.includes('violet')
-										? '139, 92, 246'
-										: feature.gradient.includes('indigo')
-											? '99, 102, 241'
-											: feature.gradient.includes('emerald')
-												? '16, 185, 129'
-												: feature.gradient.includes('amber')
-													? '245, 158, 11'
-													: feature.gradient.includes('rose')
-														? '244, 63, 94'
-														: '6, 182, 212'
-								}, 0.2)`,
-							}}
+							className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 shadow-lg ${feature.shadowClass}`}
 						>
 							<svg
 								className="w-7 h-7 text-white"

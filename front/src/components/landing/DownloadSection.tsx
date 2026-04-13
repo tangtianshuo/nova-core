@@ -217,12 +217,18 @@ export function DownloadSection() {
 			<div className="mt-8 text-center">
 				<p className="text-sm text-zinc-500 mb-4">其他下载选项</p>
 				<div className="flex flex-wrap items-center justify-center gap-4">
-					<span className="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer">
+					<a
+						href="#"
+						className="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer"
+					>
 						便携版 (Windows)
-					</span>
-					<span className="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer">
+					</a>
+					<a
+						href="#"
+						className="px-4 py-2 rounded-xl glass-inset hover:bg-white/10 transition-colors text-sm text-zinc-300 cursor-pointer"
+					>
 						Homebrew
-					</span>
+					</a>
 					<a
 						href={GITHUB_URL}
 						target="_blank"
