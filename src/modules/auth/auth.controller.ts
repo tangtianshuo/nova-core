@@ -178,6 +178,14 @@ export const refresh = async (
     // Exchange old refresh token for new tokens
     const tokens = await refreshAccessToken(refreshToken);
 
+    logAuditEvent({
+      action: 'TOKEN_REFRESH',
+      userId: tokens.userId,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      metadata: { refreshTokenUsed: true },
+    });
+
     const response: RefreshTokenResponse = {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,

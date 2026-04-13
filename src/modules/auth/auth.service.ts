@@ -163,7 +163,7 @@ export const verifyRefreshToken = async (
  */
 export const refreshAccessToken = async (
   oldRefreshToken: string
-): Promise<{ accessToken: string; refreshToken: string; expiresIn: string }> => {
+): Promise<{ accessToken: string; refreshToken: string; expiresIn: string; userId: string }> => {
   // Verify old refresh token
   const { userId, tokenId } = await verifyRefreshToken(oldRefreshToken);
 
@@ -190,6 +190,7 @@ export const refreshAccessToken = async (
     accessToken,
     refreshToken,
     expiresIn: config.jwt.accessToken.expiresIn,
+    userId,
   };
 };
 
