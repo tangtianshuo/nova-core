@@ -6,7 +6,7 @@ export function Navbar() {
 	const { versionInfo } = useVersion();
 
 	return (
-		<nav className="fixed top-4 left-4 right-4 z-50 glass rounded-2xl px-6 py-4">
+		<nav className="fixed top-4 left-4 right-4 z-50 rounded-2xl px-6 py-4" style={{background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.2)'}}>
 			<div className="flex items-center justify-between max-w-7xl mx-auto">
 				<div className="flex items-center gap-4">
 					<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary via-indigo-500 to-purple-600 flex items-center justify-center glow-primary">
