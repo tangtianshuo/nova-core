@@ -38,9 +38,9 @@ export function useDownload() {
 				throw new Error('未找到 Windows 下载链接');
 			}
 
-			// 替换下载链接的 domain 为 download.novai.net.cn，并在路径前加上 nova-agents
+			// 替换下载链接的 domain 为 download.novai.net.cn
 			const urlObj = new URL(originalUrl);
-			const downloadUrl = `https://download.novai.net.cn/nova-agents${urlObj.pathname}`;
+			const downloadUrl = `https://download.novai.net.cn${urlObj.pathname}`;
 
 			setDownloadStatus('downloading');
 
