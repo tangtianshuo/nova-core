@@ -14,6 +14,7 @@
 - [x] **Phase 5: Logger Foundation** - 统一日志门面 + 结构化JSON日志基础设施 (completed 2026-04-11)
 - [x] **Phase 6: Access & Error Logging + Rotation** - HTTP访问日志、错误日志、日志轮转 (completed 2026-04-11)
 - [x] **Phase 7: Audit & Security Hardening** - 审计日志、敏感字段过滤、ELK兼容 (completed 2026-04-11)
+- [ ] **Phase 8: Audit & Logging Integration Fixes** - 集成LOG-07压缩和LOG-10 TOKEN_REFRESH审计事件
 
 ---
 
@@ -78,6 +79,17 @@
 
 ---
 
+### Phase 8: Audit & Logging Integration Fixes
+
+**Goal:** 修复审计日志和日志压缩集成问题
+
+**Depends on:** Phase 7
+**Requirements:** LOG-07, LOG-10
+**Status:** PLANNED
+**Gap Closure:** Closes LOG-07 (compression unwired) and LOG-10 (TOKEN_REFRESH missing audit event)
+
+---
+
 ## Progress Table
 
 | Phase | Plans Complete | Status | Completed |
@@ -85,6 +97,7 @@
 | 5. Logger Foundation | 1/1 | Complete    | 2026-04-11 |
 | 6. Access & Error Logging + Rotation | 2/2 | Complete   | 2026-04-11 |
 | 7. Audit & Security Hardening | 2/2 | Complete   | 2026-04-11 |
+| 8. Audit & Logging Integration Fixes | 0/1 | Planned    | — |
 
 ---
 
@@ -98,18 +111,18 @@
 | LOG-04 | Phase 5 | Complete |
 | LOG-05 | Phase 6 | Complete |
 | LOG-06 | Phase 6 | Complete |
-| LOG-07 | Phase 7 | Complete (Plan 02) |
+| LOG-07 | Phase 8 | Gap Closure |
 | LOG-08 | Phase 6 | Complete |
 | LOG-09 | Phase 6 | Complete |
-| LOG-10 | Phase 7 | Complete (Plan 02) |
-| LOG-11 | Phase 7 | Pending (Plan 01) |
-| LOG-12 | Phase 7 | Pending (Plan 01) |
+| LOG-10 | Phase 8 | Gap Closure |
+| LOG-11 | Phase 7 | Complete |
+| LOG-12 | Phase 7 | Complete |
 | LOG-13 | Phase 5 | Complete |
-| LOG-14 | Phase 7 | Pending (Plan 01) |
+| LOG-14 | Phase 7 | Complete |
 
 **Mapped:** 14/14 requirements
-**Completed:** 9/14 requirements (LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06, LOG-08, LOG-09, LOG-13)
-**Phase 7 coverage:** LOG-07, LOG-10, LOG-11, LOG-12, LOG-14 (5 requirements)
+**Completed:** 10/14 requirements (LOG-01~06, LOG-08~09, LOG-11~14)
+**In Progress:** LOG-07, LOG-10 (Phase 8 gap closure)
 
 ---
 

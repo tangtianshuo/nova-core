@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import { join } from 'path';
 import authRoutes from './modules/auth/auth.routes.js';
 import oauthRoutes from './modules/oauth/oauth.routes.js';
 import smsRoutes from './modules/sms/sms.routes.js';
@@ -9,6 +10,7 @@ import { errorHandler } from './middleware/error.middleware.js';
 import { requestIdMiddleware } from './lib/request-id.js';
 import accessLogger from './middleware/access-log.middleware.js';
 import { setupGlobalErrorHandlers } from './server-global-error.js';
+import { createCompressionWatcher } from './lib/compression.js';
 
 const app = express();
 
@@ -60,6 +62,10 @@ const PORT = process.env.PORT || 3000;
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+
+    // Start gzip compression watcher for rotated logs
+    const logDir = join(process.cwd(), 'logs');
+    createCompressionWatcher({ logDir, intervalMs: 60000, maxAgeHours: 1 });
   });
 }
 
