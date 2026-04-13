@@ -141,7 +141,5 @@ export async function createCompressionWatcher(
 }
 
 export default {
-  compressFile,
-  compressRotatedFile,
   createCompressionWatcher,
 };
