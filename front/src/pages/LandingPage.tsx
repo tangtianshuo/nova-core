@@ -64,7 +64,7 @@ const quickActions = [
 
 export default function LandingPage() {
 	const { toasts, removeToast } = useToast();
-	const { versionInfo, loading: versionLoading } = useVersion();
+	const { versionInfo } = useVersion();
 	const [activeTab, setActiveTab] = useState<TabType>('chat');
 
 	// 统一格式化版本信息传递给子组件
